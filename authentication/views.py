@@ -3,12 +3,12 @@ import json
 import django
 from django.contrib.auth import authenticate
 from django.core.cache import cache
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from authentication.email import verify_email
 from authentication.forms import UserForm, LoginForm, EmailForm
 from authentication.models import User
-from panda.result import Result
+from enrollment.result import Result
 
 
 def register(request):
@@ -56,9 +56,9 @@ def login(request):
         else:
             login_form = LoginForm(request.POST)
         if login_form.is_valid():
-            email = login_form.cleaned_data['email']
+            username = login_form.cleaned_data['username']
             password = login_form.cleaned_data['password']
-            user = authenticate(email=email, password=password)
+            user = authenticate(username=username, password=password)
             if user is not None:
                 django.contrib.auth.login(request, user)
                 return JsonResponse(data=Result(user.username, message="登陆成功").to_dict())
@@ -74,8 +74,8 @@ def login(request):
 def index(request):
     if request.method == 'GET':
         # 提取浏览器中的cookie，如果不为空，表示已经登录
-        # user = request.user
-        return JsonResponse(Result().to_dict())
+        user = request.user
+        return HttpResponse('<html><body>%s</body></html>' % user.username)
 
 
 def logout(request):
