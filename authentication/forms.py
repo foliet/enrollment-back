@@ -51,7 +51,7 @@ class UserForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='用户名')
+    user_name = forms.CharField(label='用户名')
     password = forms.CharField(label='密码', widget=forms.PasswordInput())
 
     def clean_username(self):
@@ -74,10 +74,3 @@ class LoginForm(forms.Form):
 class EmailForm(forms.Form):
     email = forms.EmailField(label='邮箱')
 
-    def clean_email(self):
-        value = self.cleaned_data['email']
-        try:
-            User.objects.get(email=value)
-        except User.DoesNotExist:
-            return value
-        raise forms.ValidationError(u"该邮箱已注册", code='email invalid')
