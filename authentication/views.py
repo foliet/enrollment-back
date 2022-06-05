@@ -2,12 +2,12 @@ import json
 
 import django
 from django.contrib.auth import authenticate
-from django.core.cache import cache
 from django.http import JsonResponse, HttpResponse
 
 from authentication.email import verify_email
 from authentication.forms import UserForm, LoginForm, EmailForm
 from authentication.models import User
+from enrollment import cache
 from enrollment.result import Result
 
 
