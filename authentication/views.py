@@ -31,7 +31,7 @@ def index(request):
     if request.method == 'GET':
         # 提取浏览器中的cookie，如果不为空，表示已经登录
         user = request.user
-        return JsonResponse(Result(data=user.username).to_dict())
+        return JsonResponse(Result(data={"username": user.username}).to_dict())
 
 
 def logout(request):
