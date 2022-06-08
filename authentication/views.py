@@ -2,7 +2,6 @@ import json
 
 import django
 from django.contrib.auth import authenticate
-from django.http import JsonResponse
 
 from authentication.forms import LoginForm
 from enrollment.result import Result, Results
@@ -20,21 +19,25 @@ def login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 django.contrib.auth.login(request, user)
-                return JsonResponse(Result(data={"identity": user.identity}, data_message="登陆成功").to_dict())
+                request.session['id'] = user.id
+                request.session['identity'] = user.identity
+                return Result(data={"identity": user.identity}, data_message="登陆成功").to_response()
             else:
-                return JsonResponse(Result(data={}, data_message="用户名或密码错误,请重新登录", status=False).to_dict())
+                return Result(data_message="登陆失败：用户名或密码错误,请重新登录", status=False).to_response()
         else:
-            return JsonResponse(Results.illegal_argument)
+            return Results.illegal_argument
 
 
 def index(request):
     if request.method == 'GET':
-        # 提取浏览器中的cookie，如果不为空，表示已经登录
-        user = request.user
-        return JsonResponse(Result(data={"username": user.username}).to_dict())
+        try:
+            _id = request.session['id']
+        except KeyError:
+            return Results.not_login
+        return Result(data={"user_id": _id}).to_response()
 
 
 def logout(request):
     if request.method == 'POST':
         django.contrib.auth.logout(request)
-        return JsonResponse(Result(data_message='登出成功').to_dict())
+        return Result(data_message='登出成功').to_response()

@@ -23,3 +23,4 @@ class Curriculum(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    student = models.ManyToManyField('authentication.User')

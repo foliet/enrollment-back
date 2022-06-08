@@ -73,4 +73,3 @@ class LoginForm(forms.Form):
 
 class EmailForm(forms.Form):
     email = forms.EmailField(label='邮箱')
-
